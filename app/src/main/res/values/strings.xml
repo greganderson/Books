@@ -2,7 +2,8 @@
 <resources>
 
     <string name="app_name">Books</string>
-    <string name="hello_world">Hello world!</string>
+    <string name="book_detail_title">Book Detail</string>
     <string name="action_settings">Settings</string>
+
 
 </resources>

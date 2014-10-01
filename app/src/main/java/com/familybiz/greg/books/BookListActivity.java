@@ -2,10 +2,12 @@
 package com.familybiz.greg.books;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.database.DataSetObserver;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
@@ -36,20 +38,31 @@ public class BookListActivity extends Activity implements ListAdapter {
         super.onCreate(savedInstanceState);
 
 		// TODO: Load from file or a server online
-		/*
 		mBookList.add("Words of Radiance");
 		mBookList.add("Mistborn");
 		mBookList.add("Harry Potter and the Sorcerer's Stone");
 		mBookList.add("Green Eggs and Ham");
-		*/
 
+		/*
 		mBookImageList.add(R.drawable.words_of_radiance);
 		mBookImageList.add(R.drawable.mistborn);
 		mBookImageList.add(R.drawable.harry_potter);
 		mBookImageList.add(R.drawable.green_eggs_and_ham);
+		*/
 
 		ListView bookListView = new ListView(this);
 		bookListView.setAdapter(this);
+		bookListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+			@Override
+			public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+				String bookTitle = mBookList.get(i);
+
+				Intent bookDetailIntent = new Intent();
+				bookDetailIntent.putExtra(bookTitle, BookDetailActivity.BOOK_TITLE_EXTRA);
+				bookDetailIntent.setClass(BookListActivity.this, BookDetailActivity.class);
+				startActivity(bookDetailIntent);
+			}
+		});
         setContentView(bookListView);
     }
 
@@ -134,7 +147,7 @@ public class BookListActivity extends Activity implements ListAdapter {
 	@Override
 	public View getView(int position, View view, ViewGroup viewGroup) {
 		String itemText = mBookList.get(position);
-		int itemResource = mBookImageList.get(position);
+		//int itemResource = mBookImageList.get(position);
 
 		LinearLayout bookLayout = new LinearLayout(this);
 		bookLayout.setOrientation(LinearLayout.HORIZONTAL);
@@ -148,7 +161,7 @@ public class BookListActivity extends Activity implements ListAdapter {
 		bookView.setText(itemText);
 
 		ImageView bookImageView = new ImageView(this);
-		bookImageView.setImageResource(itemResource);
+		//bookImageView.setImageResource(itemResource);
 
 		bookLayout.addView(bookImageView);
 		bookLayout.addView(bookView);
