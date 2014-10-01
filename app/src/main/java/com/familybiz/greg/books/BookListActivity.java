@@ -12,6 +12,17 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 
 
@@ -25,10 +36,12 @@ public class BookListActivity extends Activity implements ListAdapter {
         super.onCreate(savedInstanceState);
 
 		// TODO: Load from file or a server online
+		/*
 		mBookList.add("Words of Radiance");
 		mBookList.add("Mistborn");
 		mBookList.add("Harry Potter and the Sorcerer's Stone");
 		mBookList.add("Green Eggs and Ham");
+		*/
 
 		mBookImageList.add(R.drawable.words_of_radiance);
 		mBookImageList.add(R.drawable.mistborn);
@@ -41,6 +54,49 @@ public class BookListActivity extends Activity implements ListAdapter {
     }
 
 	@Override
+	protected void onRestart() {
+		super.onRestart();
+
+		try {
+			File file = new File(getFilesDir(), "Library.txt");
+			FileReader textReader = new FileReader(file);
+			BufferedReader bufferedTextReader = new BufferedReader(textReader);
+
+			String jsonBookList = bufferedTextReader.readLine();
+
+			Gson gson = new Gson();
+			Type bookListType = new TypeToken<ArrayList<String>>(){}.getType();
+			mBookList = gson.fromJson(jsonBookList, bookListType);
+
+			bufferedTextReader.close();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Override
+    protected void onPause() {
+        super.onPause();
+
+		Gson gson = new Gson();
+		String jsonBookList = gson.toJson(mBookList);
+
+		try {
+			File file = new File(getFilesDir(), "Library.txt");
+			FileWriter textWriter = new FileWriter(file);
+			BufferedWriter bufferedTextWriter = new BufferedWriter(textWriter);
+
+			bufferedTextWriter.write(jsonBookList);
+
+			bufferedTextWriter.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+    @Override
 	public boolean isEmpty() {
 		return false;
 	}
