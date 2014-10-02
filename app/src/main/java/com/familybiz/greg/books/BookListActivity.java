@@ -58,7 +58,7 @@ public class BookListActivity extends Activity implements ListAdapter {
 				String bookTitle = mBookList.get(i);
 
 				Intent bookDetailIntent = new Intent();
-				bookDetailIntent.putExtra(bookTitle, BookDetailActivity.BOOK_TITLE_EXTRA);
+				bookDetailIntent.putExtra(BookDetailActivity.BOOK_TITLE_EXTRA, bookTitle);
 				bookDetailIntent.setClass(BookListActivity.this, BookDetailActivity.class);
 				startActivity(bookDetailIntent);
 			}
