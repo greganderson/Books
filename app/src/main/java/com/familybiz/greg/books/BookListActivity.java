@@ -13,7 +13,6 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import java.io.File;
 import java.util.ArrayList;
 
 
@@ -25,8 +24,6 @@ public class BookListActivity extends Activity implements ListAdapter {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-	    Library.getInstance().setLibraryFile(new File(getFilesDir(), "Library.txt"));
 
 		// TODO: Load from file or a server online
 		mBookList.add("Words of Radiance");
