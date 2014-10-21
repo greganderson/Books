@@ -21,6 +21,10 @@
             android:name=".BookDetailActivity"
             android:label="@string/book_detail_title" >
         </activity>
+        <activity
+            android:name=".BookAddActivity"
+            android:label="@string/book_add_title" >
+        </activity>
     </application>
 
 </manifest>
