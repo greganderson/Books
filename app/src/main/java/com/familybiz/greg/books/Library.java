@@ -15,7 +15,7 @@ import java.util.Date;
 
 public class Library {
 
-	public class Book {
+	public static class Book {
 		public String title;
 		public Date publicationDate;
 
@@ -36,6 +36,18 @@ public class Library {
 		if (mLibraryFile != null && mBooks.size() == 0)
 			mInstance.loadLibrary(mLibraryFile);
 		return mInstance;
+	}
+
+	public interface OnBookSetChangedListenter {
+		public void onBookSetChanged();
+	}
+	OnBookSetChangedListenter mOnBookSetChangedListenter = null;
+
+	public OnBookSetChangedListenter getOnBookSetChangedListenter() {
+		return mOnBookSetChangedListenter;
+	}
+	public void setOnBookSetChangedListenter(OnBookSetChangedListenter listener) {
+		mOnBookSetChangedListenter = listener;
 	}
 
 	private Library() {}
@@ -63,14 +75,18 @@ public class Library {
 		mBooks.add(new Book(book));
 
 		saveLibrary(mLibraryFile);
-		// TODO: Notify listener of book addition
+		// Notify listener of book addition
+		if (mOnBookSetChangedListenter != null)
+			mOnBookSetChangedListenter.onBookSetChanged();
 	}
 
 	public void removeBook(int bookIndex) {
 		mBooks.remove(bookIndex);
 
 		saveLibrary(mLibraryFile);
-		// TODO: Notify listener of book removal
+		// Notify listener of book removal
+		if (mOnBookSetChangedListenter != null)
+			mOnBookSetChangedListenter.onBookSetChanged();
 	}
 
 	private void loadLibrary(File libraryFile) {

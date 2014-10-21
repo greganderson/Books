@@ -8,57 +8,85 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Timer;
+import java.util.TimerTask;
 
 
 public class BookListActivity extends Activity implements ListAdapter {
 
 	ArrayList<String> mBookList = new ArrayList<String>();
 	ArrayList<Integer> mBookImageList = new ArrayList<Integer>();
+	ListView mBookListView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-		// TODO: Load from file or a server online
-		mBookList.add("Words of Radiance");
-		mBookList.add("Mistborn");
-		mBookList.add("Harry Potter and the Sorcerer's Stone");
-		mBookList.add("Green Eggs and Ham");
+	    final LinearLayout rootLayout = new LinearLayout(this);
+	    rootLayout.setOrientation(LinearLayout.VERTICAL);
 
-		ListView bookListView = new ListView(this);
-		bookListView.setAdapter(this);
-		bookListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-			@Override
-			public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-				Intent bookDetailIntent = new Intent();
-				bookDetailIntent.putExtra(BookDetailActivity.BOOK_INDEX_EXTRA, i);
-				bookDetailIntent.setClass(BookListActivity.this, BookDetailActivity.class);
-				startActivity(bookDetailIntent);
-			}
-		});
-        setContentView(bookListView);
+		mBookListView = new ListView(this);
+		mBookListView.setAdapter(this);
+	    rootLayout.addView(mBookListView, new LinearLayout.LayoutParams(
+			    ViewGroup.LayoutParams.MATCH_PARENT, 0, 1));
+
+	    Button addBookButton = new Button(this);
+	    addBookButton.setText(getString(R.string.add_book_button_title));
+	    rootLayout.addView(addBookButton, new LinearLayout.LayoutParams(
+			    ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+
+        setContentView(rootLayout);
+
+	    mBookListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+		    @Override
+		    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+			    Intent bookDetailIntent = new Intent();
+			    bookDetailIntent.putExtra(BookDetailActivity.BOOK_INDEX_EXTRA, i);
+			    bookDetailIntent.setClass(BookListActivity.this, BookDetailActivity.class);
+			    startActivity(bookDetailIntent);
+		    }
+	    });
+
+	    addBookButton.setOnClickListener(new View.OnClickListener() {
+		    @Override
+		    public void onClick(View view) {
+			    Intent addBookIntent = new Intent();
+			    addBookIntent.setClass(BookListActivity.this, BookAddActivity.class);
+			    startActivity(addBookIntent);
+		    }
+	    });
+
+	    Library.getInstance().setOnBookSetChangedListenter(new Library.OnBookSetChangedListenter() {
+		    @Override
+		    public void onBookSetChanged() {
+			    runOnUiThread(new Runnable() {
+				    @Override
+				    public void run() {
+					    mBookListView.invalidateViews();
+				    }
+			    });
+		    }
+	    });
+
+	    Timer addBookTimer = new Timer();
+	    addBookTimer.schedule(new TimerTask() {
+		    @Override
+		    public void run() {
+			    Library.Book book = new Library.Book();
+			    book.title = "A book published " + (new Date()).toString();
+			    book.publicationDate = new Date();
+				Library.getInstance().addBook(book);
+		    }
+	    }, 5000, 5000);
     }
-
-	@Override
-	protected void onRestart() {
-		super.onRestart();
-	}
-
-	@Override
-	protected void onResume() {
-		super.onResume();
-	}
-
-	@Override
-    protected void onPause() {
-        super.onPause();
-	}
 
     @Override
 	public boolean isEmpty() {

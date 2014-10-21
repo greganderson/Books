@@ -44,8 +44,10 @@ public class BookDetailActivity extends Activity {
 		deleteButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View view) {
-				if (mBookIndex >= 0 && mBookIndex < Library.getInstance().getBookCount())
+				if (mBookIndex >= 0 && mBookIndex < Library.getInstance().getBookCount()) {
 					Library.getInstance().removeBook(mBookIndex);
+					finish();
+				}
 			}
 		});
 	}
